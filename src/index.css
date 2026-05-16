@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #f5f1e8;
+  color: #141210;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Hide native Safari/Chrome disclosure triangle on FAQ details */
+summary::-webkit-details-marker {
+  display: none;
+}
+summary {
+  list-style: none;
+}
