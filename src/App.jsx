@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from "framer-motion";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 
 // =====================================================
 // Zay. side hustle for your thumb.
@@ -866,16 +867,19 @@ function VoltHighlight({ children }) {
 // =====================================================
 // NAV
 // =====================================================
-function Nav({ page, onNavigate }) {
+function Nav() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isBrands = location.pathname === "/brands";
   const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-  const isBrands = page === "brands";
+
   return (
     <nav className="absolute top-0 left-0 right-0 z-50">
       <div className="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
         <div
           className="flex items-baseline gap-2 cursor-pointer"
           onClick={() => {
-            if (isBrands) onNavigate("home");
+            if (isBrands) navigate("/");
             else window.scrollTo({ top: 0, behavior: "smooth" });
           }}
         >
@@ -901,7 +905,7 @@ function Nav({ page, onNavigate }) {
         </div>
         <div className="flex items-center gap-4 sm:gap-5">
           <button
-            onClick={() => onNavigate(isBrands ? "home" : "brands")}
+            onClick={() => navigate(isBrands ? "/" : "/brands")}
             className="text-xs uppercase tracking-widest transition-opacity hover:opacity-60"
             style={{ color: INK, fontFamily: "'JetBrains Mono', monospace", fontWeight: 600 }}
           >
@@ -1201,8 +1205,10 @@ function Waitlist() {
 // =====================================================
 // FOOTER
 // =====================================================
-function Footer({ page, onNavigate }) {
-  const isBrands = page === "brands";
+function Footer() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isBrands = location.pathname === "/brands";
   return (
     <footer className="py-12 px-6" style={{ background: PAPER, borderTop: `1.5px solid ${INK}` }}>
       <div className="max-w-6xl mx-auto">
@@ -1244,7 +1250,7 @@ function Footer({ page, onNavigate }) {
               <div>
                 looking to join?{" "}
                 <button
-                  onClick={() => onNavigate("home")}
+                  onClick={() => navigate("/")}
                   className="hover:underline"
                   style={{ color: INK, fontWeight: 600, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "inherit", fontSize: "inherit" }}
                 >
@@ -1255,7 +1261,7 @@ function Footer({ page, onNavigate }) {
               <div>
                 running a brand?{" "}
                 <button
-                  onClick={() => onNavigate("brands")}
+                  onClick={() => navigate("/brands")}
                   className="hover:underline"
                   style={{ color: INK, fontWeight: 600, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "inherit", fontSize: "inherit" }}
                 >
@@ -1986,8 +1992,34 @@ function BrandsContact() {
 // =====================================================
 // APP
 // =====================================================
+function HomePage() {
+  return (
+    <>
+      <Hero />
+      <HowItWorks />
+      <Testimonials />
+      <Waitlist />
+    </>
+  );
+}
+
+function BrandsPage() {
+  return (
+    <>
+      <BrandsHero />
+      <BrandsProblem />
+      <BrandsWhatYouGet />
+      <BrandsHow />
+      <SampleReport />
+      <BrandsPilots />
+      <BrandsFAQ />
+      <BrandsContact />
+    </>
+  );
+}
+
 export default function App() {
-  const [page, setPage] = useState("home");
+  const location = useLocation();
 
   useEffect(() => {
     const link = document.createElement("link");
@@ -2001,34 +2033,21 @@ export default function App() {
     return () => link.remove();
   }, []);
 
-  const navigate = (p) => {
-    setPage(p);
+  // Scroll to top whenever the route changes
+  useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
-  };
+  }, [location.pathname]);
 
   return (
     <div className="min-h-screen relative" style={{ background: PAPER, color: INK }}>
-      <Nav page={page} onNavigate={navigate} />
-      {page === "home" ? (
-        <>
-          <Hero />
-          <HowItWorks />
-          <Testimonials />
-          <Waitlist />
-        </>
-      ) : (
-        <>
-          <BrandsHero />
-          <BrandsProblem />
-          <BrandsWhatYouGet />
-          <BrandsHow />
-          <SampleReport />
-          <BrandsPilots />
-          <BrandsFAQ />
-          <BrandsContact />
-        </>
-      )}
-      <Footer page={page} onNavigate={navigate} />
+      <Nav />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/brands" element={<BrandsPage />} />
+        {/* Any unknown route falls back to homepage */}
+        <Route path="*" element={<HomePage />} />
+      </Routes>
+      <Footer />
     </div>
   );
 }
