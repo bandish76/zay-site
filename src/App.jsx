@@ -378,25 +378,24 @@ function SwipeDemo() {
           )}
         </AnimatePresence>
 
-        {/* First-time swipe hint */}
+        {/* First-time swipe hint — sits below the phone, always inside the viewport */}
         <AnimatePresence>
           {!hasInteracted && (
             <motion.div
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 10, transition: { duration: 0.2 } }}
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8, transition: { duration: 0.2 } }}
               transition={{ duration: 0.5, delay: 1.6 }}
-              className="hidden md:flex absolute items-center gap-2 pointer-events-none"
+              className="flex flex-col items-center gap-1 pointer-events-none absolute left-1/2 -translate-x-1/2"
               style={{
-                top: "42%",
-                left: "calc(100% + 16px)",
+                top: "calc(100% + 12px)",
                 whiteSpace: "nowrap",
               }}
             >
-              {/* Hand-drawn arrow pointing left at the phone */}
-              <svg width="60" height="32" viewBox="0 0 60 32" fill="none" style={{ transform: "rotate(8deg)" }}>
+              {/* Hand-drawn arrow pointing up at the phone */}
+              <svg width="28" height="36" viewBox="0 0 28 36" fill="none">
                 <path
-                  d="M 56 16 Q 36 6, 18 14 Q 10 17, 4 16 M 12 10 L 4 16 L 12 22"
+                  d="M 14 32 Q 18 20, 14 8 M 8 14 L 14 6 L 20 14"
                   stroke={INK}
                   strokeWidth="2"
                   strokeLinecap="round"
@@ -405,7 +404,7 @@ function SwipeDemo() {
                 />
               </svg>
               <motion.span
-                animate={{ rotate: [-2, 2, -2] }}
+                animate={{ rotate: [-1.5, 1.5, -1.5] }}
                 transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                 className="px-3 py-1.5 inline-block"
                 style={{
@@ -419,7 +418,7 @@ function SwipeDemo() {
                   letterSpacing: "-0.01em",
                 }}
               >
-                swipe me →
+                swipe me
               </motion.span>
             </motion.div>
           )}
