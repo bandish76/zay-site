@@ -378,49 +378,94 @@ function SwipeDemo() {
           )}
         </AnimatePresence>
 
-        {/* First-time swipe hint — sits below the phone, always inside the viewport */}
+        {/* First-time swipe hint — sits LEFT of phone on desktop, BELOW on mobile */}
         <AnimatePresence>
           {!hasInteracted && (
-            <motion.div
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8, transition: { duration: 0.2 } }}
-              transition={{ duration: 0.5, delay: 1.6 }}
-              className="flex flex-col items-center gap-1 pointer-events-none absolute left-1/2 -translate-x-1/2"
-              style={{
-                top: "calc(100% + 12px)",
-                whiteSpace: "nowrap",
-              }}
-            >
-              {/* Hand-drawn arrow pointing up at the phone */}
-              <svg width="28" height="36" viewBox="0 0 28 36" fill="none">
-                <path
-                  d="M 14 32 Q 18 20, 14 8 M 8 14 L 14 6 L 20 14"
-                  stroke={INK}
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  fill="none"
-                />
-              </svg>
-              <motion.span
-                animate={{ rotate: [-1.5, 1.5, -1.5] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                className="px-3 py-1.5 inline-block"
+            <>
+              {/* Desktop: positioned to the LEFT of the phone, arrow pointing right */}
+              <motion.div
+                initial={{ opacity: 0, x: 12 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 12, transition: { duration: 0.2 } }}
+                transition={{ duration: 0.5, delay: 1.6 }}
+                className="hidden md:flex items-center gap-2 pointer-events-none absolute"
                 style={{
-                  background: VOLT,
-                  color: INK,
-                  border: `1.5px solid ${INK}`,
-                  borderRadius: 999,
-                  fontFamily: "'Bricolage Grotesque', sans-serif",
-                  fontWeight: 800,
-                  fontSize: 14,
-                  letterSpacing: "-0.01em",
+                  top: "42%",
+                  right: "calc(100% + 12px)",
+                  whiteSpace: "nowrap",
                 }}
               >
-                swipe me
-              </motion.span>
-            </motion.div>
+                <motion.span
+                  animate={{ rotate: [-5, 5, -5], y: [-1, 1, -1] }}
+                  transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
+                  className="px-3 py-1.5 inline-block"
+                  style={{
+                    background: VOLT,
+                    color: INK,
+                    border: `1.5px solid ${INK}`,
+                    borderRadius: 999,
+                    fontFamily: "'Bricolage Grotesque', sans-serif",
+                    fontWeight: 800,
+                    fontSize: 14,
+                    letterSpacing: "-0.01em",
+                  }}
+                >
+                  swipe me
+                </motion.span>
+                {/* Hand-drawn arrow pointing RIGHT at the phone */}
+                <svg width="60" height="32" viewBox="0 0 60 32" fill="none" style={{ transform: "rotate(-8deg)" }}>
+                  <path
+                    d="M 4 16 Q 24 6, 42 14 Q 50 17, 56 16 M 48 10 L 56 16 L 48 22"
+                    stroke={INK}
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    fill="none"
+                  />
+                </svg>
+              </motion.div>
+
+              {/* Mobile: positioned BELOW the phone, arrow pointing up */}
+              <motion.div
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8, transition: { duration: 0.2 } }}
+                transition={{ duration: 0.5, delay: 1.6 }}
+                className="flex md:hidden flex-col items-center gap-1 pointer-events-none absolute left-1/2 -translate-x-1/2"
+                style={{
+                  top: "calc(100% + 12px)",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                <svg width="28" height="36" viewBox="0 0 28 36" fill="none">
+                  <path
+                    d="M 14 32 Q 18 20, 14 8 M 8 14 L 14 6 L 20 14"
+                    stroke={INK}
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    fill="none"
+                  />
+                </svg>
+                <motion.span
+                  animate={{ rotate: [-5, 5, -5], y: [-1, 1, -1] }}
+                  transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
+                  className="px-3 py-1.5 inline-block"
+                  style={{
+                    background: VOLT,
+                    color: INK,
+                    border: `1.5px solid ${INK}`,
+                    borderRadius: 999,
+                    fontFamily: "'Bricolage Grotesque', sans-serif",
+                    fontWeight: 800,
+                    fontSize: 14,
+                    letterSpacing: "-0.01em",
+                  }}
+                >
+                  swipe me
+                </motion.span>
+              </motion.div>
+            </>
           )}
         </AnimatePresence>
       </div>
