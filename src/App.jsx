@@ -1007,7 +1007,7 @@ function Hero() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.1 }}
-            className="text-lg mb-10 max-w-md"
+            className="text-lg mb-6 max-w-md"
             style={{
               color: MUTED,
               fontFamily: "'Bricolage Grotesque', sans-serif",
@@ -1017,6 +1017,21 @@ function Hero() {
           >
             tell brands what you actually think. <br />
             we'll pay you for it.
+          </motion.p>
+
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.15 }}
+            className="text-base mb-10 max-w-md"
+            style={{
+              color: MUTED,
+              fontFamily: "'Bricolage Grotesque', sans-serif",
+              lineHeight: 1.5,
+              fontWeight: 500,
+            }}
+          >
+            swipe through drops from brands you actually care about. each one takes seconds. real money for real opinions.
           </motion.p>
 
           <motion.div
