@@ -1253,6 +1253,15 @@ function Footer() {
   const navigate = useNavigate();
   const location = useLocation();
   const isBrands = location.pathname === "/brands";
+
+  const socials = [
+    { label: "instagram", href: "https://instagram.com/haveyourzay" },
+    { label: "tiktok",    href: "https://tiktok.com/@haveyourzay" },
+    { label: "linkedin",  href: "https://linkedin.com/company/haveyourzay" },
+    { label: "x",         href: "https://x.com/haveyourzay" },
+    { label: "snapchat",  href: "https://www.snapchat.com/add/haveyourzay" },
+  ];
+
   return (
     <footer className="py-12 px-6" style={{ background: PAPER, borderTop: `1.5px solid ${INK}` }}>
       <div className="max-w-6xl mx-auto">
@@ -1314,6 +1323,30 @@ function Footer() {
               </div>
             )}
           </div>
+        </div>
+
+        {/* Social links row — text-only per brand bible (no icons). */}
+        <div
+          className="mt-10 pt-6 flex flex-wrap gap-x-6 gap-y-2 text-xs"
+          style={{
+            borderTop: `1px solid ${PAPER_DEEP}`,
+            color: MUTED,
+            fontFamily: "'JetBrains Mono', monospace",
+            fontWeight: 500,
+          }}
+        >
+          {socials.map((s) => (
+            <a
+              key={s.label}
+              href={s.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:underline"
+              style={{ color: INK, fontWeight: 600 }}
+            >
+              {s.label} →
+            </a>
+          ))}
         </div>
       </div>
     </footer>
