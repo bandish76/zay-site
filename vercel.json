@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/apprentice",
+      "destination": "/apprentice.html"
+    },
+    {
       "source": "/((?!.*\\.).*)",
       "destination": "/"
     }
