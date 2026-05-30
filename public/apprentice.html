@@ -748,7 +748,8 @@ nav {
 /* FOOTER */
 footer {
   background: var(--ink);
-  padding: 3rem 2rem;
+  padding: 2rem;
+  border-top: 1px solid rgba(245,241,232,0.08);
 }
 .footer-inner {
   max-width: 1100px;
@@ -756,6 +757,8 @@ footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
 }
 .footer-logo {
   text-decoration: none;
@@ -846,7 +849,7 @@ footer {
   .access-closer-strip { background: var(--volt); border-radius: 12px; padding: 1.25rem 1.5rem; }
   .acl-text { font-size: 16px; font-weight: 700; color: var(--ink); line-height: 1.5; }
 
-  .next-strip { max-width: 1100px; margin: 0 auto; padding: 6rem 2rem 0; }
+  .next-strip { max-width: 1100px; margin: 0 auto; padding: 6rem 2rem; }
   .next-strip h2 { font-size: clamp(28px, 4vw, 48px); font-weight: 800; line-height: 1.05; letter-spacing: -0.02em; color: var(--ink); margin-bottom: 1rem; }
   .next-sub { font-size: 15px; color: var(--muted); max-width: 520px; line-height: 1.65; margin-bottom: 2.5rem; }
   .next-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 1.5rem; }
