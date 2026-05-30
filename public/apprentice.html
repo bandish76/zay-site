@@ -1097,10 +1097,15 @@ footer {
         <div class="wl-label">[ step 0 — do this first ]</div>
         <div class="wl-title">join the waitlist.<br>get your referral link.</div>
         <div class="wl-desc">the leaderboard is part of your application. the more gen z you bring onto the zay waitlist before your interview the stronger your signal. we'll be watching.</div>
-        <div class="wl-input-row">
-          <input type="email" class="wl-input" id="waitlistEmail" placeholder="your@email.com">
-          <button class="wl-btn" onclick="joinWaitlist()">join →</button>
-        </div>
+        <form id="waitlistForm" action="https://formspree.io/f/maqvrzyk" method="POST">
+          <div class="wl-input-row">
+            <input type="email" class="wl-input" id="waitlistEmail" name="email" placeholder="your@email.com" required>
+            <button type="submit" class="wl-btn">join →</button>
+          </div>
+          <input type="hidden" name="_subject" value="New Zay waitlist signup (from apprentice page)">
+          <input type="hidden" name="source" value="apprentice page">
+          <input type="text" name="_gotcha" style="display:none">
+        </form>
         <div class="wl-referral" id="referralCode"></div>
         <div class="wl-leaderboard">
           <div class="wl-leaderboard-label">live leaderboard · top referrers</div>
@@ -1162,15 +1167,33 @@ footer {
 </footer>
 
 <script>
-// Waitlist referral code (demo — wire to your waitlist Formspree separately)
-function joinWaitlist() {
-  var emailEl = document.getElementById("waitlistEmail");
-  if (!emailEl) return;
-  var email = emailEl.value;
-  if (!email || !email.includes("@")) { alert("please enter a valid email"); return; }
-  var code = "ZAY-" + Math.random().toString(36).substring(2,8).toUpperCase();
-  var ref = document.getElementById("referralCode");
-  if (ref) { ref.textContent = "[ your referral link ] haveyourzay.com/join?ref=" + code; ref.classList.add("visible"); }
+// Waitlist — submits to the waitlist Formspree (separate from applications)
+var waitlistForm = document.getElementById("waitlistForm");
+if (waitlistForm) {
+  waitlistForm.addEventListener("submit", function(e) {
+    e.preventDefault();
+    var emailEl = document.getElementById("waitlistEmail");
+    var btn = waitlistForm.querySelector(".wl-btn");
+    if (!emailEl || !emailEl.value.includes("@")) { alert("please enter a valid email"); return; }
+    if (btn) { btn.textContent = "..."; btn.disabled = true; }
+    fetch(waitlistForm.action, {
+      method: "POST",
+      body: new FormData(waitlistForm),
+      headers: { "Accept": "application/json" }
+    }).then(function(r) {
+      if (r.ok) {
+        var code = "ZAY-" + Math.random().toString(36).substring(2,8).toUpperCase();
+        var ref = document.getElementById("referralCode");
+        if (ref) { ref.textContent = "[ your referral link ] zay.xyz/join?ref=" + code; ref.classList.add("visible"); }
+        if (btn) { btn.textContent = "you're in"; }
+        emailEl.value = "";
+      } else {
+        if (btn) { btn.textContent = "try again"; btn.disabled = false; }
+      }
+    }).catch(function() {
+      if (btn) { btn.textContent = "try again"; btn.disabled = false; }
+    });
+  });
 }
 
 // Update filter-question label based on role chosen
