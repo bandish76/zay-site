@@ -1,12 +1,20 @@
 {
   "rewrites": [
+    { "source": "/apprentice", "destination": "/apprentice.html" },
+    { "source": "/((?!.*\\.).*)", "destination": "/" }
+  ],
+  "headers": [
     {
       "source": "/apprentice",
-      "destination": "/apprentice.html"
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+      ]
     },
     {
-      "source": "/((?!.*\\.).*)",
-      "destination": "/"
+      "source": "/apprentice.html",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+      ]
     }
   ]
 }
