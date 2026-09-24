@@ -948,6 +948,13 @@ function Nav() {
           )}
         </div>
         <div className="flex items-center gap-4 sm:gap-5">
+          <a
+            href="/apprentice"
+            className="text-xs uppercase tracking-widest transition-opacity hover:opacity-60"
+            style={{ color: INK, fontFamily: "'JetBrains Mono', monospace", fontWeight: 600 }}
+          >
+            apprentice
+          </a>
           <button
             onClick={() => navigate(isBrands ? "/" : "/brands")}
             className="text-xs uppercase tracking-widest transition-opacity hover:opacity-60"
@@ -1312,6 +1319,12 @@ function Footer() {
                 style={{ color: INK, fontWeight: 600 }}
               >
                 bandish@zay.xyz
+              </a>
+            </div>
+            <div>
+              we're hiring.{" "}
+              <a href="/apprentice" className="hover:underline" style={{ color: INK, fontWeight: 600 }}>
+                apprentice →
               </a>
             </div>
             {isBrands ? (
@@ -2110,6 +2123,83 @@ function BrandsPage() {
   );
 }
 
+// Per-page title, description and canonical (the SPA shares one index.html)
+const SITE = "https://www.zay.xyz";
+const PAGE_META = {
+  "/": {
+    title: "zay / side hustle for your thumb",
+    description:
+      "tell brands what you actually think. we'll pay you for it. the swipe platform where gen z shapes what brands do next.",
+  },
+  "/brands": {
+    title: "zay for brands / what gen z actually thinks",
+    description:
+      "zay turns gen z instinct into structured signal, same day. test a product, an ad, a name, a campaign before you ship it.",
+  },
+};
+const NOT_FOUND_META = { title: "page not found / zay", description: "this page doesn't exist." };
+
+function setMeta(selector, attr, value) {
+  const el = document.head.querySelector(selector);
+  if (el) el.setAttribute(attr, value);
+}
+
+function usePageMeta(pathname) {
+  useEffect(() => {
+    const meta = PAGE_META[pathname] || NOT_FOUND_META;
+    const url = SITE + (pathname === "/" ? "/" : pathname);
+    document.title = meta.title;
+    setMeta('meta[name="description"]', "content", meta.description);
+    setMeta('link[rel="canonical"]', "href", url);
+    setMeta('meta[property="og:url"]', "content", url);
+    setMeta('meta[property="og:title"]', "content", meta.title);
+    setMeta('meta[name="twitter:title"]', "content", meta.title);
+    let robots = document.head.querySelector('meta[name="robots"]');
+    if (!PAGE_META[pathname]) {
+      if (!robots) {
+        robots = document.createElement("meta");
+        robots.name = "robots";
+        document.head.appendChild(robots);
+      }
+      robots.content = "noindex";
+    } else if (robots) {
+      robots.remove();
+    }
+  }, [pathname]);
+}
+
+function NotFoundPage() {
+  const navigate = useNavigate();
+  return (
+    <section className="relative pt-40 pb-32 px-6" style={{ background: PAPER }}>
+      <div className="max-w-3xl mx-auto">
+        <div
+          className="text-xs uppercase tracking-[0.25em] mb-6"
+          style={{ color: MUTED, fontFamily: "'JetBrains Mono', monospace", fontWeight: 600 }}
+        >
+          [ 404 ]
+        </div>
+        <h1
+          className="text-5xl sm:text-7xl leading-[0.95] mb-6"
+          style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 800, letterSpacing: "-0.04em", color: INK }}
+        >
+          swiped left on this page.
+        </h1>
+        <p className="text-lg mb-10" style={{ color: MUTED }}>
+          it doesn't exist, or it moved.
+        </p>
+        <button
+          onClick={() => navigate("/")}
+          className="px-6 py-3 rounded-full text-sm"
+          style={{ background: VOLT, color: INK, border: `1.5px solid ${INK}`, fontWeight: 700 }}
+        >
+          back to zay →
+        </button>
+      </div>
+    </section>
+  );
+}
+
 export default function App() {
   const location = useLocation();
 
@@ -2125,6 +2215,8 @@ export default function App() {
     return () => link.remove();
   }, []);
 
+  usePageMeta(location.pathname);
+
   // Scroll to top whenever the route changes
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
@@ -2136,8 +2228,8 @@ export default function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/brands" element={<BrandsPage />} />
-        {/* Any unknown route falls back to homepage */}
-        <Route path="*" element={<HomePage />} />
+        {/* Unknown routes get a proper not-found page */}
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
       <Footer />
     </div>
