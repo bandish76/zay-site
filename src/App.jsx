@@ -1047,7 +1047,7 @@ function Hero() {
               fontWeight: 500,
             }}
           >
-            swipe through drops from brands you actually care about. each one takes seconds. get paid, not rich.
+            swipe through drops from brands you actually care about. each one takes seconds. not a salary. a side hustle.
           </motion.p>
 
           <motion.div
