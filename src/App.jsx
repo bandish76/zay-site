@@ -34,23 +34,35 @@ function SwipeCard({ drop, onSwipe, index, isTop, shouldNudge, onUserInteract })
   const nudgeControlsRef = useRef(null);
   const interactedRef = useRef(false);
 
-  // Demo nudge: tease left, tease right, settle. Only on the very first card.
+  // Demo nudge: tease right, tease left, settle. Only on the very first card.
+  // Repeats every few seconds until the visitor touches the card, so people
+  // who were reading the headline don't miss it. Stops for good on first touch.
   useEffect(() => {
     if (!isTop || !shouldNudge) return;
     let cancelled = false;
+    const reduceMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    const wait = (ms) => new Promise((r) => setTimeout(r, ms));
     const run = async () => {
-      await new Promise((r) => setTimeout(r, 1400));
-      if (cancelled || interactedRef.current) return;
-      // right peek
-      nudgeControlsRef.current = animate(x, 55, { duration: 0.55, ease: [0.32, 0.72, 0, 1] });
-      await nudgeControlsRef.current;
-      if (cancelled || interactedRef.current) return;
-      // left peek
-      nudgeControlsRef.current = animate(x, -55, { duration: 0.7, ease: [0.4, 0, 0.4, 1] });
-      await nudgeControlsRef.current;
-      if (cancelled || interactedRef.current) return;
-      // settle
-      nudgeControlsRef.current = animate(x, 0, { type: "spring", stiffness: 200, damping: 18 });
+      let delay = 1400;
+      while (!cancelled && !interactedRef.current) {
+        await wait(delay);
+        if (cancelled || interactedRef.current) return;
+        // right peek
+        nudgeControlsRef.current = animate(x, 55, { duration: 0.55, ease: [0.32, 0.72, 0, 1] });
+        await nudgeControlsRef.current;
+        if (cancelled || interactedRef.current) return;
+        // left peek
+        nudgeControlsRef.current = animate(x, -55, { duration: 0.7, ease: [0.4, 0, 0.4, 1] });
+        await nudgeControlsRef.current;
+        if (cancelled || interactedRef.current) return;
+        // settle
+        nudgeControlsRef.current = animate(x, 0, { type: "spring", stiffness: 200, damping: 18 });
+        await nudgeControlsRef.current;
+        if (reduceMotion) return; // one nudge only for people who prefer less motion
+        delay = 6500;
+      }
     };
     run();
     return () => {
