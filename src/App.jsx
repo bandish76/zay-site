@@ -15,11 +15,12 @@ const INK = "#141210";
 const MUTED = "#6B6359";
 
 const DROPS = [
-  { id: 1, brand: "Aimé Leon Dore", bg: "#FFB84D", question: "new colourway. cop or drop?", visual: "👟" },
-  { id: 2, brand: "Spotify", bg: "#7BC4A4", question: "wrapped, but in june?", visual: "🎧" },
-  { id: 3, brand: "Glossier", bg: "#E89BB8", question: "this shade name: main character", visual: "💄" },
-  { id: 4, brand: "Arc'teryx", bg: "#5B7FB8", question: "puffer in pastel pink. yes?", visual: "🧥" },
-  { id: 5, brand: "Trader Joe's", bg: "#D4574E", question: "bring back the everything seasoning sticks?", visual: "🥯" },
+  // Example drops only. Brand names are made up.
+  { id: 1, brand: "Offcut Studio", bg: "#FFB84D", question: "new colourway. cop or drop?", visual: "👟" },
+  { id: 2, brand: "Loop Audio", bg: "#7BC4A4", question: "year in review, but in june?", visual: "🎧" },
+  { id: 3, brand: "Softglow", bg: "#E89BB8", question: "this shade name: main character", visual: "💄" },
+  { id: 4, brand: "Northline", bg: "#5B7FB8", question: "puffer in pastel pink. yes?", visual: "🧥" },
+  { id: 5, brand: "Corner Snacks", bg: "#D4574E", question: "bring back the salt & vinegar puffs?", visual: "🥔" },
 ];
 
 // =====================================================
@@ -33,23 +34,35 @@ function SwipeCard({ drop, onSwipe, index, isTop, shouldNudge, onUserInteract })
   const nudgeControlsRef = useRef(null);
   const interactedRef = useRef(false);
 
-  // Demo nudge: tease left, tease right, settle. Only on the very first card.
+  // Demo nudge: tease right, tease left, settle. Only on the very first card.
+  // Repeats every few seconds until the visitor touches the card, so people
+  // who were reading the headline don't miss it. Stops for good on first touch.
   useEffect(() => {
     if (!isTop || !shouldNudge) return;
     let cancelled = false;
+    const reduceMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    const wait = (ms) => new Promise((r) => setTimeout(r, ms));
     const run = async () => {
-      await new Promise((r) => setTimeout(r, 1400));
-      if (cancelled || interactedRef.current) return;
-      // right peek
-      nudgeControlsRef.current = animate(x, 55, { duration: 0.55, ease: [0.32, 0.72, 0, 1] });
-      await nudgeControlsRef.current;
-      if (cancelled || interactedRef.current) return;
-      // left peek
-      nudgeControlsRef.current = animate(x, -55, { duration: 0.7, ease: [0.4, 0, 0.4, 1] });
-      await nudgeControlsRef.current;
-      if (cancelled || interactedRef.current) return;
-      // settle
-      nudgeControlsRef.current = animate(x, 0, { type: "spring", stiffness: 200, damping: 18 });
+      let delay = 1400;
+      while (!cancelled && !interactedRef.current) {
+        await wait(delay);
+        if (cancelled || interactedRef.current) return;
+        // right peek
+        nudgeControlsRef.current = animate(x, 55, { duration: 0.55, ease: [0.32, 0.72, 0, 1] });
+        await nudgeControlsRef.current;
+        if (cancelled || interactedRef.current) return;
+        // left peek
+        nudgeControlsRef.current = animate(x, -55, { duration: 0.7, ease: [0.4, 0, 0.4, 1] });
+        await nudgeControlsRef.current;
+        if (cancelled || interactedRef.current) return;
+        // settle
+        nudgeControlsRef.current = animate(x, 0, { type: "spring", stiffness: 200, damping: 18 });
+        await nudgeControlsRef.current;
+        if (reduceMotion) return; // one nudge only for people who prefer less motion
+        delay = 6500;
+      }
     };
     run();
     return () => {
@@ -317,7 +330,7 @@ function SwipeDemo() {
                 className="text-center text-[10px] pt-2 pb-1"
                 style={{ color: MUTED, fontFamily: "'JetBrains Mono', monospace" }}
               >
-                swipe or tap
+                example drops · swipe or tap
               </div>
             )}
 
@@ -785,7 +798,7 @@ function WaitlistForm() {
           className="mt-4 text-xs"
           style={{ color: MUTED, fontFamily: "'JetBrains Mono', monospace", fontWeight: 500 }}
         >
-          points land in your account on launch day. cash them out for real money, gift cards or exclusive drops.
+          points land in your account on launch day. how they turn into rewards gets confirmed before then.
         </div>
       </motion.div>
     );
@@ -823,7 +836,7 @@ function WaitlistForm() {
             if (status === "error") setStatus("idle");
           }}
           onKeyDown={(e) => e.key === "Enter" && submit()}
-          placeholder="you@school.edu"
+          placeholder="your@email.com"
           className="flex-1 px-4 py-3 text-base outline-none"
           style={{
             background: "transparent",
@@ -861,7 +874,10 @@ function WaitlistForm() {
         )}
         {status === "idle" && (
           <div>
-            instant 100 pts + 50 per friend.
+            instant 100 pts + 50 per friend. 16+ only.{" "}
+            <a href="/privacy" className="underline" style={{ color: MUTED }}>
+              privacy
+            </a>
           </div>
         )}
       </div>
@@ -948,13 +964,6 @@ function Nav() {
           )}
         </div>
         <div className="flex items-center gap-4 sm:gap-5">
-          <a
-            href="/apprentice"
-            className="text-xs uppercase tracking-widest transition-opacity hover:opacity-60"
-            style={{ color: INK, fontFamily: "'JetBrains Mono', monospace", fontWeight: 600 }}
-          >
-            apprentice
-          </a>
           <button
             onClick={() => navigate(isBrands ? "/" : "/brands")}
             className="text-xs uppercase tracking-widest transition-opacity hover:opacity-60"
@@ -990,7 +999,7 @@ function Hero() {
             className="text-xs uppercase tracking-[0.25em] mb-6"
             style={{ color: MUTED, fontFamily: "'JetBrains Mono', monospace", fontWeight: 600 }}
           >
-            [ now in beta ]
+            [ waitlist open ]
           </motion.div>
 
           <motion.h1
@@ -1038,7 +1047,7 @@ function Hero() {
               fontWeight: 500,
             }}
           >
-            swipe through drops from brands you actually care about. each one takes seconds. real money for real opinions.
+            swipe through drops from brands you actually care about. each one takes seconds. not a salary. a side hustle.
           </motion.p>
 
           <motion.div
@@ -1098,7 +1107,7 @@ function HowItWorks() {
   const steps = [
     { n: "01", body: "we send you a drop. it's quick. tap, swipe, done." },
     { n: "02", body: "you tell us what you actually think. nay or yay. no essay." },
-    { n: "03", body: "you earn points. cash them in. real money, gift cards, exclusive drops." },
+    { n: "03", body: "you earn points. they turn into rewards. exactly what they're worth, we'll confirm before launch." },
   ];
   return (
     <section className="py-24 px-6" style={{ background: PAPER }}>
@@ -1153,28 +1162,14 @@ function HowItWorks() {
 }
 
 // =====================================================
-// TESTIMONIALS
+// THE DEAL
 // =====================================================
-function Testimonials() {
-  const quotes = [
-    {
-      q: "thought it was a scam ngl. then £12 hit my revolut.",
-      name: "lewis",
-      where: "kingston uni",
-      indent: false,
-    },
-    {
-      q: "i swipe on this in lectures my profs would be so disappointed.",
-      name: "maya",
-      where: "esher college, 17",
-      indent: true,
-    },
-    {
-      q: "ok the fact i can earn money having opinions on trainers is actually kinda crazy",
-      name: "sophia",
-      where: "surrey, 17",
-      indent: false,
-    },
+function TheDeal() {
+  const points = [
+    { t: "no surveys. no essays.", b: "one card, one swipe. a drop takes seconds." },
+    { t: "skip anything.", b: "only answer what you actually have an opinion on." },
+    { t: "your email stays yours.", b: "we won't spam you and we won't sell it. that's in our privacy notice." },
+    { t: "straight answer on money.", b: "points turn into rewards. what they're worth is being finalised. you'll know before launch." },
   ];
   return (
     <section className="py-24 px-6" style={{ background: PAPER_DEEP }}>
@@ -1183,21 +1178,20 @@ function Testimonials() {
           className="text-xs uppercase tracking-[0.25em] mb-12"
           style={{ color: MUTED, fontFamily: "'JetBrains Mono', monospace", fontWeight: 600 }}
         >
-          [ what people are saying ]
+          [ the deal ]
         </div>
-
-        <div className="space-y-14">
-          {quotes.map((item, i) => (
+        <div className="space-y-10">
+          {points.map((item, i) => (
             <motion.div
-              key={item.name}
+              key={item.t}
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.1 }}
-              className={item.indent ? "pl-0 sm:pl-16" : ""}
+              className={i % 2 ? "pl-0 sm:pl-16" : ""}
             >
               <p
-                className="leading-tight mb-4"
+                className="leading-tight mb-2"
                 style={{
                   fontFamily: "'Bricolage Grotesque', sans-serif",
                   color: INK,
@@ -1206,18 +1200,14 @@ function Testimonials() {
                   letterSpacing: "-0.02em",
                 }}
               >
-                "{item.q}"
+                {item.t}
               </p>
-              <div
-                className="text-xs uppercase tracking-widest"
-                style={{
-                  color: MUTED,
-                  fontFamily: "'JetBrains Mono', monospace",
-                  fontWeight: 600,
-                }}
+              <p
+                className="text-base"
+                style={{ color: MUTED, fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 500 }}
               >
-                {item.name} · {item.where}
-              </div>
+                {item.b}
+              </p>
             </motion.div>
           ))}
         </div>
@@ -1260,7 +1250,7 @@ function Waitlist() {
             fontWeight: 500,
           }}
         >
-          start earning before launch. 100 points the second you join. 50 more for every friend you bring.
+          stack points before launch. 100 the second you join. 50 more for every friend you bring.
         </p>
         <WaitlistForm />
       </div>
@@ -1319,6 +1309,11 @@ function Footer() {
                 style={{ color: INK, fontWeight: 600 }}
               >
                 bandish@zay.xyz
+              </a>
+            </div>
+            <div>
+              <a href="/privacy" className="hover:underline" style={{ color: INK, fontWeight: 600 }}>
+                privacy
               </a>
             </div>
             <div>
@@ -1430,7 +1425,7 @@ function BrandsHero() {
             fontWeight: 500,
           }}
         >
-          zay turns gen z instinct into structured signal, same day. <br />
+          zay turns gen z gut reactions into structured signal. <br />
           test a product, an ad, a name, a campaign. find out what they think before everyone else does.
         </motion.p>
 
@@ -1461,7 +1456,7 @@ function BrandsHero() {
             className="text-xs uppercase tracking-widest"
             style={{ color: MUTED, fontFamily: "'JetBrains Mono', monospace", fontWeight: 600 }}
           >
-            mvp live · panel growing · pilots opening
+            waitlist open · panel building · first pilots opening
           </div>
         </motion.div>
       </div>
@@ -1549,13 +1544,13 @@ function BrandsWhatYouGet() {
   const items = [
     {
       label: "01",
-      title: "live sentiment, not stale data",
-      body: "drop your question on monday. read the report on tuesday. that's the cycle.",
+      title: "gut reactions, not considered answers",
+      body: "one card, one swipe, a second or two. you see what they go with before they've had time to overthink it.",
     },
     {
       label: "02",
       title: "structured signal, not scraped noise",
-      body: "every response is intentional, paid and consented. clean data your team can actually use.",
+      body: "every response is intentional, rewarded and consented. clean data your team can actually use.",
     },
     {
       label: "03",
@@ -1691,27 +1686,27 @@ function BrandsHow() {
 function SampleReport() {
   const cards = [
     {
-      brand: "trader joe's",
-      question: "bring back the everything seasoning sticks?",
+      brand: "corner snacks",
+      question: "bring back the salt & vinegar puffs?",
       yay: 87,
       nay: 13,
-      quote: "they were unreal in scrambled eggs",
+      quote: "these were my entire personality in year 9",
       bg: "#D4574E",
     },
     {
-      brand: "spotify",
-      question: "wrapped, but in june?",
+      brand: "loop audio",
+      question: "year in review, but in june?",
       yay: 64,
       nay: 36,
-      quote: "wrapped hits different in december, don't ruin it",
+      quote: "it hits different in december, don't ruin it",
       bg: "#7BC4A4",
     },
     {
-      brand: "aimé leon dore",
+      brand: "offcut studio",
       question: "new colourway. cop or drop?",
       yay: 41,
       nay: 59,
-      quote: "looks like a 2019 stussy collab i'm sorry",
+      quote: "looks like a 2019 collab i'm sorry",
       bg: "#FFB84D",
     },
   ];
@@ -1840,7 +1835,7 @@ function SampleReport() {
           className="mt-6 text-xs uppercase tracking-widest"
           style={{ color: MUTED, fontFamily: "'JetBrains Mono', monospace", fontWeight: 600 }}
         >
-          * illustrative. real reports include cohort breakdowns, regional splits and verbatim quotes.
+          * illustrative, with made-up brands. real reports include cohort breakdowns, regional splits and verbatim quotes.
         </div>
       </div>
     </section>
@@ -1958,19 +1953,19 @@ function BrandsFAQ() {
   const faqs = [
     {
       q: "how fast can i actually get answers?",
-      a: "most pilots turn around inside a working week. simple questions can move in 48 hours once your panel is matched.",
+      a: "pilots are scoped to report back inside 5 working days.",
     },
     {
       q: "what makes this different from a survey tool?",
-      a: "two things. one, the audience opted in to give signal and gets paid for it, so you're not fighting for attention. two, the format is swipe native, so response rates and completion are way higher than any survey you've run.",
+      a: "two things. one, the audience opted in to give signal and gets rewarded for it, so you're not fighting for attention. two, it's one card, one swipe, so you get the gut call rather than a considered survey answer.",
     },
     {
       q: "is my panel reliable?",
-      a: "we verify with student emails, profile data and quality controls on response patterns. you'll see cohort breakdowns in every report so you can read the data with context.",
+      a: "every report shows exactly who answered, with cohort breakdowns and the quality checks we ran on response patterns, so you can read the data with context.",
     },
     {
       q: "what about gdpr and consent?",
-      a: "every respondent opts in per drop and gets paid for their answer. nothing scraped, nothing inferred. consent is built into the system, not bolted on.",
+      a: "every respondent opts in per drop and gets rewarded for their answer. nothing scraped, nothing inferred. consent is built into the system, not bolted on.",
     },
     {
       q: "what do reports look like?",
@@ -2102,7 +2097,7 @@ function HomePage() {
     <>
       <Hero />
       <HowItWorks />
-      <Testimonials />
+      <TheDeal />
       <Waitlist />
     </>
   );
@@ -2134,7 +2129,7 @@ const PAGE_META = {
   "/brands": {
     title: "zay for brands / what gen z actually thinks",
     description:
-      "zay turns gen z instinct into structured signal, same day. test a product, an ad, a name, a campaign before you ship it.",
+      "zay turns gen z gut reactions into structured signal. test a product, an ad, a name, a campaign before you ship it.",
   },
 };
 const NOT_FOUND_META = { title: "page not found / zay", description: "this page doesn't exist." };

@@ -1,8 +1,5 @@
 {
   "cleanUrls": true,
-  "rewrites": [
-    { "source": "/((?!.*\\.).*)", "destination": "/" }
-  ],
   "headers": [
     {
       "source": "/apprentice.html",
